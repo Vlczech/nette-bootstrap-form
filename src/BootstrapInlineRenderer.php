@@ -1,6 +1,6 @@
 <?php
 
-namespace Tomaj\Form\Renderer;
+namespace Vlczech\Form\Renderer;
 
 use Nette;
 use Nette\Forms\Rendering\DefaultFormRenderer;

@@ -1,10 +1,10 @@
 <?php
 
-namespace Tomaj\Form\Renderer;
+namespace Vlczech\Form\Renderer;
 
 use Nette;
-use Nette\Forms\Rendering\DefaultFormRenderer;
 use Nette\Forms\Controls;
+use Nette\Forms\Rendering\DefaultFormRenderer;
 
 class BootstrapRenderer extends DefaultFormRenderer
 {
@@ -67,22 +67,61 @@ class BootstrapRenderer extends DefaultFormRenderer
         $form->getElementPrototype()->addClass('form-horizontal');
         $form->getElementPrototype()->setNovalidate('novalidate');
         foreach ($form->getControls() as $control) {
-            if ($control instanceof Controls\Button) {
-                if (strpos($control->getControlPrototype()->getClass(), 'btn') === FALSE) {
-                    $control->getControlPrototype()->addClass(empty($usedPrimary) ? 'btn btn-primary' : 'btn btn-default');
-                    $usedPrimary = true;
-                }
-            } elseif ($control instanceof Controls\TextBase ||
-                $control instanceof Controls\SelectBox ||
-                $control instanceof Controls\MultiSelectBox) {
-                $control->getControlPrototype()->addClass('form-control');
-            } elseif ($control instanceof Controls\Checkbox ||
-                $control instanceof Controls\CheckboxList ||
-                $control instanceof Controls\RadioList) {
-                $control->getSeparatorPrototype()->setName('div')->addClass($control->getControlPrototype()->type);
-            }
+            $this->customizeControl($control);
         }
 
         return parent::render($form, $mode);
+    }
+    
+    
+    /**
+     * Provide rendering of control pair
+     * 
+     * @param Nette\Forms\IControl $control
+     * @return string
+     */
+    public function renderPair(Nette\Forms\IControl $control) {
+        $this->customizeControl($control);
+      
+        return parent::renderPair($control);
+    }
+    
+    
+    /**
+     * Provide rendring of control only
+     * 
+     * @param Nette\Forms\IControl $control
+     * @return string
+     */
+    public function renderControl(Nette\Forms\IControl $control) {
+        $this->customizeControl($control);
+        
+        return parent::renderControl($control);
+    }
+    
+
+    
+    
+    /**
+     * Process control 
+     * 
+     * @param Nette\Forms\IControl $control
+     */
+    private function customizeControl(Nette\Forms\IControl $control)
+    {
+        if ($control instanceof Controls\Button) {
+            if (strpos($control->getControlPrototype()->getClass(), 'btn') === FALSE) {
+                $control->getControlPrototype()->addClass(empty($usedPrimary) ? 'btn btn-primary' : 'btn btn-default');
+                $usedPrimary = true;
+            }
+        } elseif ($control instanceof Controls\TextBase ||
+            $control instanceof Controls\SelectBox ||
+            $control instanceof Controls\MultiSelectBox) {
+            $control->getControlPrototype()->addClass('form-control');
+        } elseif ($control instanceof Controls\Checkbox ||
+            $control instanceof Controls\CheckboxList ||
+            $control instanceof Controls\RadioList) {
+            $control->getSeparatorPrototype()->setName('div')->addClass($control->getControlPrototype()->type);
+        }
     }
 }
